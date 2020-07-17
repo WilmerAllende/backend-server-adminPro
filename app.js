@@ -1,10 +1,24 @@
 // Requires
-var express = require("express");
+require("dotenv").config();
+
+const express = require("express");
+const cors = require("cors");
+
 var mongoose = require("mongoose");
 var bodyParser = require("body-parser");
 
+const { dbConnection } = require("./database/config");
+
 // Incializar variables
 var app = express();
+
+// Configurar cors
+app.use(cors());
+
+// Conexion a Base de datos
+dbConnection();
+
+//console.log(process.env);
 
 // Body parser
 // parse application/x-www-form-urlencoded
@@ -20,6 +34,7 @@ var medicoRoutes = require("./routes/medico");
 var busquedaRoutes = require("./routes/busqueda");
 
 // Conexion a la base de datos
+/*
 mongoose.connection.openUri(
   "mongodb://localhost:27017/hospitalDB",
   (err, res) => {
@@ -27,7 +42,7 @@ mongoose.connection.openUri(
     console.log("Base de datos: \x1b[32m%s\x1b[0m", " online");
   }
 );
-
+*/
 // Rutas
 app.use("/usuario", usuarioRoutes);
 app.use("/login", loginRoutes);
@@ -38,6 +53,9 @@ app.use("/busqueda", busquedaRoutes);
 app.use("/", appRoutes);
 
 // Escuchar peticiones
-app.listen(3000, () => {
-  console.log("Express server puerto 3000: \x1b[32m%s\x1b[0m", " online");
+app.listen(process.env.PORT, () => {
+  console.log(
+    "Express server puerto " + process.env.PORT + ": \x1b[32m%s\x1b[0m",
+    " online"
+  );
 });
