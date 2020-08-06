@@ -1,14 +1,31 @@
+/*
+  Path: /api/login
+*/
 // Requires
 var express = require("express");
+const { login } = require("../controllers/auth");
+const { check } = require("express-validator");
+const { validarCampos } = require("../middlewares/validar-campos");
+
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
-
 var SEED = require("../config/config").SEED;
 
 // Incializar variables
 var app = express();
 var Usuario = require("../models/usuario");
 
+app.post(
+  "/",
+  [
+    check("email", "El email es obligatorio").isEmail(),
+    check("password", "Contraseña es obligatoria").not().isEmpty(),
+    validarCampos,
+  ],
+  login
+);
+
+/*
 app.post("/", (req, res) => {
   var body = req.body;
   Usuario.findOne({ email: body.email }, (err, UsuarioBuscado) => {
@@ -50,5 +67,7 @@ app.post("/", (req, res) => {
     });
   });
 });
+
+*/
 
 module.exports = app;

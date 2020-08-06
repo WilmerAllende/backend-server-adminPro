@@ -44,8 +44,8 @@ mongoose.connection.openUri(
 );
 */
 // Rutas
-app.use("/usuario", usuarioRoutes);
-app.use("/login", loginRoutes);
+app.use("/api/usuario", usuarioRoutes);
+app.use("/api/login", loginRoutes);
 app.use("/hospital", hospitalRoutes);
 app.use("/medico", medicoRoutes);
 app.use("/busqueda", busquedaRoutes);

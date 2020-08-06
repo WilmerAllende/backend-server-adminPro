@@ -1,17 +1,28 @@
 // Requires
 var express = require("express");
 var bcrypt = require("bcryptjs");
+const { check } = require("express-validator");
+const { validarCampos } = require("../middlewares/validar-campos");
 
 var mdAutenticacion = require("../middlewares/autenticacion");
 // Incializar variables
 var app = express();
 
 var Usuario = require("../models/usuario");
+const {
+  getUsuarios,
+  crearUsuario,
+  actualizarUsuario,
+  borrarUsuario,
+} = require("../controllers/usuario");
+const { verificaToken } = require("../middlewares/autenticacion");
 
 // =====================================
 // LISTAR USUARIOS
 // =====================================
 
+app.get("/", verificaToken, getUsuarios);
+/*
 app.get("/", (req, res, next) => {
   var desde = req.query.desde || 0;
   desde = Number(desde);
@@ -37,10 +48,30 @@ app.get("/", (req, res, next) => {
     });
 });
 
+
+
+  [
+    check("nombre").not().isEmpty(),
+    check("password").not().isEmpty(),
+    check("email").isEmail(),
+  ],
+*/
 // =====================================
 // CREAR UN NUEVO USUARIO
 // =====================================
+app.post(
+  "/",
+  [
+    check("nombre", "El nombre es obligatorio").not().isEmpty(),
+    check("password", "La contraseña es obligatoria").not().isEmpty(),
+    check("email", "El email es obligatorio").isEmail(),
+    validarCampos,
+  ],
+  crearUsuario
+);
+//app.post("/", mdAutenticacion.verificaToken, crearUsuario);
 
+/*
 app.post("/", mdAutenticacion.verificaToken, (req, res, next) => {
   var body = req.body;
   var usuario = new Usuario({
@@ -67,10 +98,26 @@ app.post("/", mdAutenticacion.verificaToken, (req, res, next) => {
     });
   });
 });
+*/
 
 // =====================================
 // ACTUALIZAR UN USUARIO
 // =====================================
+//Solo actualzar el usuario que ingresa al sistema (su propia cuenta)
+
+// Actualizar usuario colocando el id
+app.put(
+  "/:id",
+  [
+    verificaToken,
+    check("nombre", "El nombre es obligatorio").not().isEmpty(),
+    check("role", "El rol es obligatorio").not().isEmpty(),
+    check("email", "El email es obligatorio").isEmail(),
+    validarCampos,
+  ],
+  actualizarUsuario
+);
+/*
 app.put("/:id", mdAutenticacion.verificaToken, (req, res) => {
   var id = req.params.id;
   var body = req.body;
@@ -112,10 +159,13 @@ app.put("/:id", mdAutenticacion.verificaToken, (req, res) => {
     });
   });
 });
-
+*/
 // =====================================
 // ELIMINAR UN USUARIO POR ID
 // =====================================
+
+app.delete("/:id", verificaToken, borrarUsuario);
+/*
 app.delete("/:id", mdAutenticacion.verificaToken, (req, res) => {
   var id = req.params.id;
   Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
@@ -141,5 +191,5 @@ app.delete("/:id", mdAutenticacion.verificaToken, (req, res) => {
     });
   });
 });
-
+*/
 module.exports = app;

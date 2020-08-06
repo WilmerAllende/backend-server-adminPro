@@ -4,8 +4,35 @@ var SEED = require("../config/config").SEED;
 // =====================================
 // VERIFICAR TOKEN
 // =====================================
-exports.verificaToken = function (req, res, next) {
-  var token = req.query.token;
+const verificaToken = function (req, res, next) {
+  //Leer token
+
+  // Como parametro
+  // const token = req.query.token;
+
+  const token = req.header("x-token");
+
+  if (!token) {
+    return res.status(401).json({
+      ok: false,
+      msg: "No se ha envio token de seguridad",
+    });
+  }
+
+  try {
+    const { uid } = jwt.verify(token, process.env.JWT_SECRET);
+    req.uid = uid;
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      errors: error,
+      msg: "Token no valido",
+    });
+  }
+
+  /*
   jwt.verify(token, SEED, (err, decoded) => {
     if (err) {
       return res.status(401).json({
@@ -18,6 +45,11 @@ exports.verificaToken = function (req, res, next) {
     req.usuario = decoded.usuario;
     next();
   });
+  */
+};
+
+module.exports = {
+  verificaToken,
 };
 
 // app.use("/", (req, res, next) => {});
