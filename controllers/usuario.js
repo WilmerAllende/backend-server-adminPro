@@ -1,3 +1,6 @@
+/*
+PATH: '/api/usuario'
+*/
 const Usuario = require("../models/usuario");
 var bcrypt = require("bcryptjs");
 const { generarJWT } = require("../helpers/jwt");
