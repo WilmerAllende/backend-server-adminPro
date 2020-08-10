@@ -1,4 +1,57 @@
 // Requires
+const { Router } = require("express");
+const { check } = require("express-validator");
+const { validarCampos } = require("../middlewares/validar-campos");
+
+// Incializar variables
+const app = Router();
+
+var Usuario = require("../models/usuario");
+
+const { verificaToken } = require("../middlewares/autenticacion");
+const {
+  getMedicos,
+  crearMedico,
+  actualizarMedico,
+  borrarMedico,
+} = require("../controllers/medicos");
+
+// =====================================
+// LISTAR MEDICOS
+// =====================================
+
+app.get("/", verificaToken, getMedicos);
+
+// =====================================
+// CREAR UN NUEVO MEDICO
+// =====================================
+app.post(
+  "/",
+  [
+    verificaToken,
+    check("nombre", "Nombre de medico es obligatorio").not().isEmpty(),
+    check("hospital", "Hopital debe ser valido").isMongoId(),
+    //check("hospital", "Hopital es obligatorio").not().isEmpty(),
+    validarCampos,
+  ],
+  crearMedico
+);
+
+// =====================================
+// ACTUALIZAR UN MEDICO
+// =====================================
+app.put("/:id", [], actualizarMedico);
+
+// =====================================
+// ELIMINAR UN MEDICO POR ID
+// =====================================
+
+app.delete("/:id", verificaToken, borrarMedico);
+
+module.exports = app;
+
+/*
+// Requires
 var express = require("express");
 
 var mdAutenticacion = require("../middlewares/autenticacion");
@@ -14,11 +67,11 @@ var Medico = require("../models/medico");
 app.get("/", (req, res) => {
   var desde = req.query.desde || 0;
   desde = Number(desde);
-  Medico.find({}, "nombre img usuario hospital")
+  Medico.find({}, "nombre img usuario Medico")
     .skip(desde)
     .limit(5)
     .populate("usuario", "nombre email")
-    .populate("hospital")
+    .populate("Medico")
     .exec((err, medicos) => {
       if (err) {
         return res.status(500).json({
@@ -46,7 +99,7 @@ app.post("/", mdAutenticacion.verificaToken, (req, res) => {
   var medico = new Medico({
     nombre: body.nombre,
     usuario: req.usuario._id,
-    hospital: body.hospital,
+    Medico: body.Medico,
   });
 
   medico.save((err, MeidcoGuardado) => {
@@ -91,7 +144,7 @@ app.put("/:id", mdAutenticacion.verificaToken, (req, res) => {
     medicoBuscado.nombre = body.nombre;
     // medicoBuscado.img = body.img;
     medicoBuscado.usuario = req.usuario._id;
-    medicoBuscado.hospital = body.hospital;
+    medicoBuscado.Medico = body.Medico;
 
     medicoBuscado.save((err, medicoGuardado) => {
       if (err) {
@@ -140,3 +193,4 @@ app.delete("/:id", mdAutenticacion.verificaToken, (req, res) => {
 });
 
 module.exports = app;
+*/

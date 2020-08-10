@@ -1,4 +1,55 @@
 // Requires
+const { Router } = require("express");
+const { check } = require("express-validator");
+const { validarCampos } = require("../middlewares/validar-campos");
+
+// Incializar variables
+const app = Router();
+
+var Usuario = require("../models/usuario");
+
+const { verificaToken } = require("../middlewares/autenticacion");
+const {
+  getHospitales,
+  crearHospital,
+  actualizarHospital,
+  borrarHospital,
+} = require("../controllers/hospitales");
+
+// =====================================
+// LISTAR HOSPITALES
+// =====================================
+
+app.get("/", verificaToken, getHospitales);
+
+// =====================================
+// CREAR UN NUEVO HOSPITAL
+// =====================================
+app.post(
+  "/",
+  [
+    verificaToken,
+    check("nombre", "Nombre del hospital es obligatorio").not().isEmpty(),
+    validarCampos,
+  ],
+  crearHospital
+);
+
+// =====================================
+// ACTUALIZAR UN HOSPITAL
+// =====================================
+app.put("/:id", [], actualizarHospital);
+
+// =====================================
+// ELIMINAR UN HOSPITAL POR ID
+// =====================================
+
+app.delete("/:id", verificaToken, borrarHospital);
+
+module.exports = app;
+
+/*
+// Requires
 var express = require("express");
 
 var mdAutenticacion = require("../middlewares/autenticacion");
@@ -139,3 +190,5 @@ app.delete("/:id", mdAutenticacion.verificaToken, (req, res) => {
 });
 
 module.exports = app;
+
+*/

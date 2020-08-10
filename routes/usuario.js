@@ -1,10 +1,8 @@
 // Requires
 var express = require("express");
-var bcrypt = require("bcryptjs");
 const { check } = require("express-validator");
 const { validarCampos } = require("../middlewares/validar-campos");
 
-var mdAutenticacion = require("../middlewares/autenticacion");
 // Incializar variables
 var app = express();
 

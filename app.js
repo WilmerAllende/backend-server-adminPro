@@ -44,10 +44,10 @@ mongoose.connection.openUri(
 );
 */
 // Rutas
-app.use("/api/usuario", usuarioRoutes);
+app.use("/api/usuarios", usuarioRoutes);
 app.use("/api/login", loginRoutes);
-app.use("/hospital", hospitalRoutes);
-app.use("/medico", medicoRoutes);
+app.use("/api/hospitales", hospitalRoutes);
+app.use("/api/medicos", medicoRoutes);
 app.use("/busqueda", busquedaRoutes);
 
 app.use("/", appRoutes);
